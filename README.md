@@ -1,38 +1,60 @@
-# Project Scada Monitoring Line
+# 🚀 Project SCADA Monitoring Line
 
-โปรเจกต์สำหรับดึงข้อมูลจาก Kepware (OPC UA) มาเก็บใน Database เพื่อนำไปใช้งานต่อใน Django หรือระบบ Monitoring อื่นๆ
+ระบบดึงข้อมูลจาก Kepware (OPC UA) มาพักไว้ใน Database เพื่อรองรับการทำ Web Monitoring และจัดการ Tag จำนวนมากได้ง่าย
 
-## โครงสร้างโปรเจกต์
-- `collector/`: ไฟล์หลักสำหรับการดึงข้อมูล
-    - `main.py`: โปรแกรมดึงข้อมูล (Collector)
-    - `config.py`: ตั้งค่า IP และ Database
-    - `setup_db.py`: ใช้เตรียม Database (สำหรับทดสอบ)
-- `database/`: ไฟล์ SQL Schema
+---
 
-## วิธีเริ่มต้นใช้งาน (Quick Start)
+## 🛠️ ขั้นตอนการติดตั้ง (Setup)
 
-1. **ติดตั้ง Library ที่จำเป็น:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. ติดตั้ง Library ที่จำเป็น
+เปิด Terminal ในโฟลเดอร์โปรเจกต์แล้วรันคำสั่ง:
+```bash
+pip install -r requirements.txt
+```
 
-2. **เตรียม Database:**
-   (หากใช้ SQLite เพื่อทดสอบให้รันคำสั่งนี้)
-   ```bash
-   cd collector
-   python setup_db.py
-   ```
+### 2. ตั้งค่าไฟล์คอนฟิก (.env)
+แก้ไขไฟล์ `.env` ที่อยู่โฟลเดอร์หลัก:
+* `OPC_SERVER_URL`: IP ของ Kepware Server
+* `OPC_USER` / `OPC_PASSWORD`: ใส่ถ้ามีการตั้งรหัสผ่านที่ Kepware
+* `POLLING_INTERVAL`: ความถี่ในการดึงข้อมูล (วินาที)
 
-3. **แก้ไข Tag ที่ต้องการ Monitor:**
-   - เปิดไฟล์ `scada_data.db` (หรือ PostgreSQL) แล้วเพิ่มรายชื่อ Tag ที่ต้องการลงในตาราง `tag_config`
-   - ใส่ชื่อ Tag และ Address ให้ตรงกับใน Kepware (เช่น `ns=2;s=Line1.Machine1.Status`)
+### 3. เตรียม Database (รันครั้งแรกเท่านั้น)
+```bash
+cd collector
+python3 setup_db.py
+```
 
-4. **เริ่มรันโปรแกรม:**
-   ```bash
-   python main.py
-   ```
+---
 
-## การปรับจูน (Adjustment)
-- **เพิ่ม Tag:** ไม่ต้องหยุดโปรแกรม แค่เพิ่มแถวใหม่ในตาราง `tag_config` โปรแกรมจะดึงข้อมูลมาเองในรอบถัดไป
-- **ประสิทธิภาพ:** โปรแกรมใช้ Async IO และ Batch Insert เพื่อรองรับ 1,000+ Tags ได้อย่างสบาย
-- **PostgreSQL:** หากต้องการใช้งานจริงกับข้อมูลจำนวนมาก ให้เปลี่ยน `DB_TYPE = "postgres"` ใน `config.py`
+## 📑 การจัดการ Tag (ง่ายที่สุดผ่าน Excel/CSV)
+
+ไม่ต้องเปิด Database เอง! ให้จัดการผ่านไฟล์ CSV ในโฟลเดอร์ `Tag/` แทน:
+
+1. **แก้ไขไฟล์ CSV**: เปิดไฟล์ `collector/Tag/sample_tags.csv` ด้วย Excel เพื่อใส่รายชื่อ Tag (หรือสร้างไฟล์ .csv ใหม่ในโฟลเดอร์นั้น)
+2. **คอลัมน์ที่ต้องมี**: `machine_name`, `tag_name`, `opc_address`, `deadband`, `description`
+3. **สั่ง Update ข้อมูลเข้า Database**:
+```bash
+python3 import_csv_tags.py
+```
+*(คุณสามารถรันคำสั่งนี้ได้ตลอดเมื่อมีการเพิ่มหรือแก้ไขรายชื่อ Tag ใน CSV)*
+
+---
+
+## 🏃 การเริ่มรันระบบ (Running)
+
+เริ่มการดึงข้อมูลจาก Kepware ลง Database:
+```bash
+python3 main.py
+```
+
+### 💡 ข้อแนะนำการใช้งานจริง
+* **การเพิ่ม Tag**: แค่แก้ไขไฟล์ CSV แล้วรัน `import_csv_tags.py` ระบบจะอัปเดต Tag ใหม่ให้ทันทีโดยไม่ต้องหยุด `main.py`
+* **OPC UA Trust**: อย่าลืมไปกด **Trust** ให้กับ Client ในโปรแกรม **OPC UA Configuration** ของ Kepware ในการรันครั้งแรก
+
+---
+
+## 📂 โครงสร้างโปรเจกต์
+* `collector/`: โปรแกรมดึงข้อมูลหลัก
+* `database/`: ที่เก็บไฟล์ Database (`scada_data.db`)
+* `collector/Tag/`: โฟลเดอร์เก็บไฟล์ CSV สำหรับตั้งค่า Tag
+* `.env`: ไฟล์เก็บการตั้งค่าการเชื่อมต่อทั้งหมด
