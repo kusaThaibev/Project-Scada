@@ -30,6 +30,10 @@ def import_from_csv():
 
     print(f"Found {len(csv_files)} files: {csv_files}")
 
+    # --- DELETE/DEACTIVATE LOGIC ---
+    # We will keep track of all OPC addresses found in ALL CSV files
+    all_csv_addresses = []
+
     for filename in csv_files:
         filepath = os.path.join(TAG_FOLDER, filename)
         print(f"\nProcessing {filename}...")
@@ -37,14 +41,6 @@ def import_from_csv():
         with open(filepath, mode='r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
             
-            # Updated required fields to use machine_name
-            required_fields = ['machine_name', 'tag_name', 'opc_address', 'deadband', 'description']
-            if not all(field in reader.fieldnames for field in reader.fieldnames if field in required_fields):
-                # Check specifically for machine_name
-                if 'machine_name' not in reader.fieldnames:
-                    print(f"Skip {filename}: Missing 'machine_name' column")
-                    continue
-
             for row in reader:
                 try:
                     # 1. Get or Create Machine
@@ -56,7 +52,10 @@ def import_from_csv():
                         cur.execute("SELECT id FROM machines WHERE machine_name = %s", (machine_name,))
                     machine_id = cur.fetchone()[0]
 
-                    # 2. Insert or Update Tag Config
+                    # 2. Insert or Update Tag Config (Set to Active)
+                    address = row['opc_address'].strip()
+                    all_csv_addresses.append(address)
+                    
                     sql = """
                     INSERT INTO tag_config (machine_id, tag_name, opc_address, deadband, description, is_active)
                     VALUES (?, ?, ?, ?, ?, 1)
@@ -64,13 +63,14 @@ def import_from_csv():
                         machine_id=excluded.machine_id,
                         tag_name=excluded.tag_name,
                         deadband=excluded.deadband,
-                        description=excluded.description
+                        description=excluded.description,
+                        is_active=1
                     """
                     
                     params = (
                         machine_id, 
                         row['tag_name'].strip(), 
-                        row['opc_address'].strip(), 
+                        address, 
                         float(row['deadband']), 
                         row['description'].strip()
                     )
@@ -79,14 +79,27 @@ def import_from_csv():
                         sql = sql.replace("?", "%s")
                     
                     cur.execute(sql, params)
-                    print(f"  - Imported Tag: {row['tag_name']}")
+                    print(f"  - Imported/Updated Tag: {row['tag_name']}")
                     
                 except Exception as e:
-                    print(f"  - Error importing row {row.get('tag_name')}: {e}")
+                    print(f"  - Error importing row: {e}")
+
+    # --- DEACTIVATE TAGS NOT IN CSV ---
+    # Any tag in the DB that is NOT in our all_csv_addresses list will be set to is_active = 0
+    if all_csv_addresses:
+        placeholders = ','.join(['?' for _ in all_csv_addresses])
+        if config.DB_TYPE == "postgres":
+            placeholders = ','.join(['%s' for _ in all_csv_addresses])
+            
+        deactivate_sql = f"UPDATE tag_config SET is_active = 0 WHERE opc_address NOT IN ({placeholders})"
+        cur.execute(deactivate_sql, all_csv_addresses)
+        
+        deactivated_count = cur.rowcount
+        print(f"\nℹ️ Deactivated {deactivated_count} tags that were NOT in the CSV files.")
 
     conn.commit()
     conn.close()
-    print("\n✅ All CSV files processed successfully.")
+    print("\n✅ Sync with CSV files completed successfully.")
 
 if __name__ == "__main__":
     import_from_csv()

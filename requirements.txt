@@ -1,3 +1,6 @@
 asyncua==1.0.6
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
+psutil==5.9.8
+pandas==2.2.3
+openpyxl==3.1.5

@@ -55,6 +55,29 @@ python3 main.py
 
 ## 📂 โครงสร้างโปรเจกต์
 * `collector/`: โปรแกรมดึงข้อมูลหลัก
+* `web/`: ระบบหน้าเว็บ Django (Dashboard & Admin)
 * `database/`: ที่เก็บไฟล์ Database (`scada_data.db`)
 * `collector/Tag/`: โฟลเดอร์เก็บไฟล์ CSV สำหรับตั้งค่า Tag
 * `.env`: ไฟล์เก็บการตั้งค่าการเชื่อมต่อทั้งหมด
+
+---
+
+## 🌐 ระบบหน้าเว็บ (Web Dashboard & Admin)
+
+เรามีระบบหน้าเว็บสำหรับดูข้อมูลแบบ Real-time และจัดการ Tag:
+
+### 1. วิธีเริ่มรันหน้าเว็บ
+```bash
+cd web
+./run_web.sh
+```
+จากนั้นเปิดเบราว์เซอร์ไปที่: `http://localhost:8000`
+
+### 2. การจัดการ Tag ผ่านหน้าเว็บ (Admin)
+คุณสามารถจัดการ Machine และ Tag ได้ง่ายๆ ผ่านหน้า Admin:
+* **URL**: `http://localhost:8000/admin`
+* **User**: `admin`
+* **Password**: `admin123`
+
+### 3. Dashboard หน้าตาพรีเมียม
+หน้าแรกจะแสดงสถานะของทุกเครื่องจักร (Machine) และค่าของ Tag แบบ Real-time พร้อมไฟสถานะ Online/Offline โดยจะทำการรีเฟรชข้อมูลเองอัตโนมัติทุก 5 วินาที
