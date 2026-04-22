@@ -7,7 +7,6 @@
 .command-center {
     display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;
     padding: 16px 32px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 /* --- GRID --- */
@@ -16,21 +15,21 @@
     background: var(--card-bg); border-radius: 24px; border: 1px solid var(--glass-border);
     backdrop-filter: blur(15px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
 }
-.card:hover { transform: translateY(-10px); border-color: rgba(56, 189, 248, 0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
-.card-header { padding: 24px 32px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+.card:hover { transform: translateY(-8px); border-color: rgba(56, 189, 248, 0.3); }
+.card-header { padding: 24px 32px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
 .card-body { padding: 12px 32px 32px; min-height: 100px; }
 
 /* --- TAGS --- */
 .tag-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 .tag-row:last-child { border-bottom: none; }
 .tag-name { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
-.tag-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: monospace; opacity: 0.7; }
+.tag-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: monospace; opacity: 0.5; }
 .tag-val { font-size: 1.5rem; font-weight: 800; color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); }
 {% endblock %}
 
 {% block content %}
 <div class="command-center">
-    <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Command Center</div>
+    <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Operations</div>
     <div style="display: flex; gap: 12px;">
         {% if not collector_running %}
         <button class="btn" onclick="askConfirm('Establish secure OPC connection?', '{% url 'start_collector' %}')">CONNECT</button>
@@ -46,8 +45,8 @@
     {% for item in dashboard_data %}
     <div class="card">
         <div class="card-header">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-color);">{{ item.machine.machine_name }}</h3>
-            <span style="font-size: 0.7rem; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 12px;">{{ item.active_tags }}/{{ item.total_tags }} SENSORS</span>
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--accent-color); letter-spacing: -0.5px;">{{ item.machine.machine_name }}</h3>
+            <span style="font-size: 0.65rem; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; font-weight: 700;">{{ item.active_tags }}/{{ item.total_tags }} SENSORS</span>
         </div>
         <div class="card-body">
             {% for snap in item.tags %}
@@ -58,14 +57,14 @@
                 </div>
                 <div style="text-align: right;">
                     <div id="tag-val-{{ snap.tag.id }}" class="tag-val">{{ snap.last_value|default:"---" }}</div>
-                    <div id="tag-status-wrap-{{ snap.tag.id }}" style="font-size: 0.65rem; font-weight: 800; color: {% if snap.last_status == 'Good' %}var(--success){% else %}var(--danger){% endif %};">
-                        ● <span id="tag-status-{{ snap.tag.id }}">{{ snap.last_status|upper }}</span>
+                    <div id="tag-status-wrap-{{ snap.tag.id }}" style="font-size: 0.6rem; font-weight: 900; color: {% if snap.last_status == 'Good' %}var(--success){% else %}var(--danger){% endif %};">
+                        <span id="tag-status-{{ snap.tag.id }}">{{ snap.last_status|upper }}</span>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div style="padding: 40px 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; font-style: italic;">
-                No active sensors detected
+            <div style="padding: 40px 0; text-align: center; color: var(--text-secondary); font-size: 0.8rem; font-style: italic; opacity: 0.5;">
+                No active sensors
             </div>
             {% endfor %}
         </div>
@@ -76,11 +75,11 @@
 <!-- LOCAL CONFIRM MODAL -->
 <div id="cModal" class="modal">
     <div class="modal-inner">
-        <h2 class="modal-title" style="margin-bottom: 15px;">Are you sure?</h2>
-        <div id="cBody" style="color: var(--text-secondary); margin-bottom: 35px;">Please confirm.</div>
+        <h2 style="margin-bottom: 12px; font-size: 1.3rem; letter-spacing: -0.5px;">Confirmation</h2>
+        <div id="cBody" style="color: var(--text-secondary); margin-bottom: 35px; font-size: 0.95rem;">Please confirm your action.</div>
         <div style="display: flex; gap: 16px;">
-            <button class="btn btn-ghost" style="flex:1; justify-content:center;" onclick="closeC()">CANCEL</button>
-            <a id="cBtn" href="#" class="btn" style="flex:1; justify-content:center;">CONFIRM</a>
+            <button class="btn btn-ghost" style="flex:1;" onclick="closeC()">CANCEL</button>
+            <a id="cBtn" href="#" class="btn" style="flex:1;">PROCEED</a>
         </div>
     </div>
 </div>
@@ -96,7 +95,6 @@ function askConfirm(msg, url) {
 function closeC() { document.getElementById('cModal').style.display = 'none'; }
 
 function updatePage(data) {
-    // Update individual tags
     data.tags.forEach(tag => {
         const valEl = document.getElementById(`tag-val-${tag.tag_id}`);
         const statusEl = document.getElementById(`tag-status-${tag.tag_id}`);

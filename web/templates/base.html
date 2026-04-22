@@ -78,7 +78,7 @@
         .dropdown { position: relative; }
         .dropdown-content {
             display: none; position: absolute; top: 100%; left: -20px;
-            background: #0f172a; min-width: 260px; border-radius: 20px;
+            background: #0f172a; min-width: 220px; border-radius: 20px;
             border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.7);
             padding: 12px; margin-top: 5px; backdrop-filter: blur(20px);
             animation: dropSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -93,8 +93,8 @@
 
         .dropdown-item {
             padding: 14px 20px; color: var(--text-secondary); text-decoration: none;
-            display: flex; align-items: center; gap: 14px; font-size: 0.9rem; border-radius: 14px;
-            transition: 0.3s; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 14px; font-size: 0.85rem; border-radius: 14px;
+            transition: 0.3s; margin-bottom: 4px; font-weight: 500;
         }
         .dropdown-item:hover { background: rgba(56, 189, 248, 0.1); color: var(--accent-color); transform: translateX(8px); }
 
@@ -109,7 +109,8 @@
 
         .btn {
             background: var(--accent-color); color: #000; border: none; padding: 10px 24px; border-radius: 12px;
-            font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+            font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+            letter-spacing: 0.5px;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
         .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--glass-border); }
@@ -136,13 +137,13 @@
             <div class="nav-left">
                 <a href="/" class="logo">SCADA<span>NEXT</span></a>
                 <div class="nav-menu">
-                    <a href="/" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">DASHBOARD</a>
+                    <a href="/" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">REAL-TIME</a>
                     <div class="dropdown">
-                        <span class="nav-item {% if 'config' in request.path or 'admin' in request.path %}active{% endif %}">CONFIGURATIONS ▾</span>
+                        <span class="nav-item {% if 'config' in request.path or 'admin' in request.path %}active{% endif %}">SYSTEM CONFIG ▾</span>
                         <div class="dropdown-content">
-                            <a href="/admin" class="dropdown-item">🗄️ Database Admin</a>
-                            <a href="{% url 'tag_config_list' %}" class="dropdown-item">🏷️ Tag Config Manager</a>
-                            <a href="{% url 'edit_env' %}" class="dropdown-item">🔌 OPC Server Setup</a>
+                            <a href="/admin" class="dropdown-item">DATABASE</a>
+                            <a href="{% url 'tag_config_list' %}" class="dropdown-item">TAG MANAGEMENT</a>
+                            <a href="{% url 'edit_env' %}" class="dropdown-item">CONNECTIVITY</a>
                         </div>
                     </div>
                 </div>
@@ -163,18 +164,18 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer style="text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6;">
-        System Update: <span id="footer-sync-time">---</span> | System Core v2.0
+    <footer style="text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.4;">
+        UPDATE: <span id="footer-sync-time">---</span> | SYSTEM CORE v2.0
     </footer>
 
     {% if messages %}
     <div id="baseMsgModal" class="modal" style="display: flex;">
         <div class="modal-inner">
             {% for message in messages %}
-            <h2 style="margin-bottom: 15px; color: var(--accent-color);">{{ message.tags|upper }}</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 30px;">{{ message }}</p>
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem; letter-spacing: 1px; color: var(--accent-color);">{{ message.tags|upper }}</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px; font-size: 0.9rem;">{{ message }}</p>
             {% endfor %}
-            <button class="btn" style="width: 100%; justify-content: center;" onclick="document.getElementById('baseMsgModal').style.display='none'">CLOSE</button>
+            <button class="btn" style="width: 100%;" onclick="document.getElementById('baseMsgModal').style.display='none'">CLOSE</button>
         </div>
     </div>
     {% endif %}
@@ -184,25 +185,20 @@
             try {
                 const response = await fetch('/api/snapshots/');
                 const data = await response.json();
-                
                 const opcBadge = document.getElementById('opc-badge-base');
                 const opcText = document.getElementById('opc-text-base');
                 if (opcBadge) {
                     opcBadge.className = `badge ${data.opc_connected ? 'status-on' : 'status-off'}`;
                     opcText.innerText = data.opc_connected ? 'ACTIVE' : 'OFFLINE';
                 }
-
                 const engineBadge = document.getElementById('engine-badge-base');
                 const engineText = document.getElementById('engine-text-base');
                 if (engineBadge) {
                     engineBadge.className = `badge ${data.collector_running ? 'status-on' : 'status-off'}`;
                     engineText.innerText = data.collector_running ? 'STABLE' : 'IDLE';
                 }
-                
                 const footerTime = document.getElementById('footer-sync-time');
                 if (footerTime) footerTime.innerText = data.last_sync;
-
-                // Call local page update if exists
                 if (typeof updatePage === 'function') updatePage(data);
             } catch (err) { console.error(err); }
         }

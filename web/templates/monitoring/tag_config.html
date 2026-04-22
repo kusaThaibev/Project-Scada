@@ -6,7 +6,7 @@
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
 .file-card { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--glass-border); padding: 20px; backdrop-filter: blur(10px); }
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; padding: 15px 20px; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
+th { text-align: left; padding: 15px 20px; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--glass-border); }
 td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
 
 .input-minimal {
@@ -20,12 +20,12 @@ td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 
 {% block content %}
 <div class="page-header">
     <div>
-        <h1 style="font-size: 1.75rem; margin-bottom: 8px;">Tag Configuration Files</h1>
-        <p style="color: var(--text-secondary);">Manage your CSV and Excel tag definitions</p>
+        <h1 style="font-size: 1.75rem; margin-bottom: 8px; letter-spacing: -0.5px;">File Management</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">CSV and Excel tag definitions</p>
     </div>
     <div style="display: flex; gap: 12px;">
-        <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">📤 Upload</button>
-        <button class="btn" onclick="openCreateModal()">✨ New File</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">UPLOAD</button>
+        <button class="btn" onclick="openCreateModal()">NEW FILE</button>
     </div>
 </div>
 
@@ -40,45 +40,44 @@ td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 
             <tr>
                 <th>Filename</th>
                 <th>Size</th>
-                <th>Last Modified</th>
+                <th>Modified</th>
                 <th style="text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for file in files %}
             <tr>
-                <td style="font-weight: 600;">📄 {{ file.name }}</td>
-                <td style="color: var(--text-secondary);">{{ file.size }}</td>
-                <td style="color: var(--text-secondary);">{{ file.modified|date:"d M Y, H:i" }}</td>
+                <td style="font-weight: 600;">{{ file.name }}</td>
+                <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ file.size }}</td>
+                <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ file.modified|date:"d M Y, H:i" }}</td>
                 <td style="text-align: right;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end;">
                         {% if file.name|slice:"-3:" == "csv" %}
-                        <a href="{% url 'edit_tag_file' file.name %}" class="btn btn-ghost">✏️ Edit</a>
+                        <a href="{% url 'edit_tag_file' file.name %}" class="btn btn-ghost">EDIT</a>
                         {% endif %}
-                        <a href="{% url 'delete_tag_file' file.name %}" class="btn btn-danger" onclick="return confirm('Delete this file?')">🗑️</a>
+                        <a href="{% url 'delete_tag_file' file.name %}" class="btn btn-danger" onclick="return confirm('Delete this file?')">DELETE</a>
                     </div>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-secondary);">No configuration files found.</td>
+                <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-secondary); font-size: 0.85rem; opacity: 0.5;">No configuration files found.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
-<!-- CREATE FILE MODAL -->
 <div id="createModal" class="modal">
     <div class="modal-inner">
-        <h2 style="margin-bottom: 10px;">New Configuration</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">Enter a name for your new CSV file.</p>
+        <h2 style="margin-bottom: 12px; font-size: 1.3rem;">New Configuration</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">Enter filename (e.g. production_line_1)</p>
         <form action="{% url 'create_tag_file' %}" method="POST">
             {% csrf_token %}
-            <input type="text" name="filename" class="input-minimal" placeholder="e.g. production_line_2" required autofocus>
+            <input type="text" name="filename" class="input-minimal" placeholder="filename" required autofocus>
             <div style="display: flex; gap: 12px;">
-                <button type="button" class="btn btn-ghost" style="flex: 1; justify-content: center;" onclick="closeCreateModal()">Cancel</button>
-                <button type="submit" class="btn" style="flex: 1; justify-content: center;">Create File</button>
+                <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeCreateModal()">CANCEL</button>
+                <button type="submit" class="btn" style="flex: 1;">CREATE</button>
             </div>
         </form>
     </div>

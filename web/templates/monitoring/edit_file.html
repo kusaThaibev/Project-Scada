@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Editor | {{ filename }}</title>
+    <title>Tag Editor | {{ filename }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,54 +24,52 @@
         .content { padding: 40px; flex-grow: 1; max-width: 1600px; margin: 0 auto; width: 100%; }
 
         .editor-container { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--glass-border); overflow: hidden; display: flex; flex-direction: column; backdrop-filter: blur(10px); }
-        .editor-header { padding: 20px 30px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .editor-header { padding: 20px 30px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
 
         /* TABLE STYLES */
         .table-wrapper { overflow-x: auto; padding: 20px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th { text-align: left; padding: 12px 15px; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); }
+        th { text-align: left; padding: 12px 15px; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--glass-border); }
         td { padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         
         .cell-input {
-            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid transparent;
+            width: 100%; background: rgba(255,255,255,0.02); border: 1px solid transparent;
             padding: 10px 12px; border-radius: 8px; color: white; font-family: inherit;
             font-size: 0.85rem; outline: none; transition: 0.2s;
         }
         .cell-input:focus { border-color: var(--accent-color); background: rgba(56, 189, 248, 0.05); }
 
-        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; letter-spacing: 0.5px; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3); }
         .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--glass-border); }
-        .btn-danger { background: rgba(244, 63, 94, 0.1); color: var(--danger); width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 8px; }
+        .btn-danger { background: rgba(244, 63, 94, 0.1); color: var(--danger); width: 32px; height: 32px; padding: 0; border-radius: 8px; font-weight: 800; font-size: 0.7rem; }
         .btn-danger:hover { background: var(--danger); color: white; }
 
         .footer-actions { padding: 20px 30px; display: flex; gap: 15px; }
-
-        /* Hidden raw textarea for submission */
         #rawContent { display: none; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div style="font-weight: 700; font-size: 1.1rem;">TABLE EDITOR: <span style="color: var(--accent-color);">{{ filename }}</span></div>
+        <div style="font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px;">TAG EDITOR: <span style="color: var(--accent-color);">{{ filename }}</span></div>
         <div style="display: flex; gap: 12px;">
-            <a href="{% url 'tag_config_list' %}" class="btn btn-ghost">Cancel</a>
-            <button class="btn" onclick="saveTable()">💾 Save Changes</button>
+            <a href="{% url 'tag_config_list' %}" class="btn btn-ghost">CANCEL</a>
+            <button class="btn" onclick="saveTable()">SAVE CHANGES</button>
         </div>
     </nav>
 
     <main class="content">
         <div class="editor-container">
             <div class="editor-header">
-                <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">ACTIVE CONFIGURATION ROWS</div>
-                <button class="btn btn-ghost" onclick="addRow()">➕ Add New Row</button>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">Tag Definitions</div>
+                <button class="btn btn-ghost" onclick="addRow()">ADD TAG</button>
             </div>
             
             <div class="table-wrapper">
                 <table id="tagTable">
                     <thead>
                         <tr>
-                            <th>Machine Name</th>
+                            <th>Machine</th>
                             <th>Tag Name</th>
                             <th>OPC Address</th>
                             <th>Deadband</th>
@@ -79,18 +77,15 @@
                             <th style="width: 50px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Rows injected by JS -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
 
             <div class="footer-actions">
-                <button class="btn btn-ghost" onclick="addRow()">➕ Add Another Tag</button>
+                <button class="btn btn-ghost" onclick="addRow()">ADD NEW TAG</button>
             </div>
         </div>
 
-        <!-- Submission Form -->
         <form id="saveForm" method="POST">
             {% csrf_token %}
             <textarea id="rawContent" name="content"></textarea>
@@ -98,18 +93,14 @@
     </main>
 
     <script>
-        // Load initial data
         const rawCsv = `{{ content|escapejs }}`;
         const tableBody = document.getElementById('tableBody');
 
         function parseCsv(csv) {
             const lines = csv.trim().split('\n');
             if (lines.length === 0) return [];
-            
-            // Skip header if it exists
             const startIdx = lines[0].includes('machine_name') ? 1 : 0;
             const data = [];
-            
             for (let i = startIdx; i < lines.length; i++) {
                 if (lines[i].trim() === "") continue;
                 const cols = lines[i].split(',');
@@ -124,19 +115,17 @@
             return data;
         }
 
-        function renderRows(data) {
-            data.forEach(row => addRow(row));
-        }
+        function renderRows(data) { data.forEach(row => addRow(row)); }
 
         function addRow(data = { machine: '', tag: '', address: '', deadband: '0.1', desc: '' }) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" class="cell-input" value="${data.machine}" placeholder="Production Line 1"></td>
-                <td><input type="text" class="cell-input" value="${data.tag}" placeholder="Conveyor_Speed"></td>
-                <td><input type="text" class="cell-input" value="${data.address}" placeholder="ns=2;s=Line1.Speed"></td>
+                <td><input type="text" class="cell-input" value="${data.machine}" placeholder="machine"></td>
+                <td><input type="text" class="cell-input" value="${data.tag}" placeholder="tag"></td>
+                <td><input type="text" class="cell-input" value="${data.address}" placeholder="address"></td>
                 <td><input type="text" class="cell-input" value="${data.deadband}" placeholder="0.1"></td>
-                <td><input type="text" class="cell-input" value="${data.desc}" placeholder="Speed of line 1"></td>
-                <td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">🗑️</button></td>
+                <td><input type="text" class="cell-input" value="${data.desc}" placeholder="description"></td>
+                <td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>
             `;
             tableBody.appendChild(tr);
         }
@@ -144,23 +133,18 @@
         function saveTable() {
             const rows = tableBody.querySelectorAll('tr');
             let csv = "machine_name,tag_name,opc_address,deadband,description\n";
-            
             rows.forEach(tr => {
                 const inputs = tr.querySelectorAll('input');
-                const rowData = Array.from(inputs).map(i => i.value.trim().replace(/,/g, ';')); // Basic CSV escape
-                if (rowData.some(v => v !== "")) {
-                    csv += rowData.join(',') + "\n";
-                }
+                const rowData = Array.from(inputs).map(i => i.value.trim().replace(/,/g, ';'));
+                if (rowData.some(v => v !== "")) csv += rowData.join(',') + "\n";
             });
-
             document.getElementById('rawContent').value = csv;
             document.getElementById('saveForm').submit();
         }
 
-        // Initialize
         const initialData = parseCsv(rawCsv);
         renderRows(initialData);
-        if (initialData.length === 0) addRow(); // Add an empty row if file is new
+        if (initialData.length === 0) addRow();
     </script>
 </body>
 </html>
