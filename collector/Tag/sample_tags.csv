@@ -1,0 +1,4 @@
+machine_name,tag_name,opc_address,deadband,description
+Production_Line_1,Conveyor_Speed,ns=2;s=Line1.Conveyor.Speed,0.5,Main Conveyor Speed
+Production_Line_1,Motor_Current,ns=2;s=Line1.Motor.Amps,0.1,Main Motor Amps
+Utilities,Energy_Total,ns=2;s=Global.Energy.Total,1.0,Total Factory Energy
