@@ -1338,3 +1338,119 @@
 2026-04-22 16:52:07,766 - INFO - connect
 2026-04-22 16:52:07,766 - INFO - opening connection
 2026-04-22 16:52:07,767 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:12,768 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:12,769 - INFO - connect
+2026-04-22 16:52:12,769 - INFO - opening connection
+2026-04-22 16:52:12,769 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:17,770 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:17,770 - INFO - connect
+2026-04-22 16:52:17,770 - INFO - opening connection
+2026-04-22 16:52:17,771 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:22,773 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:22,773 - INFO - connect
+2026-04-22 16:52:22,773 - INFO - opening connection
+2026-04-22 16:52:22,773 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:27,774 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:27,774 - INFO - connect
+2026-04-22 16:52:27,774 - INFO - opening connection
+2026-04-22 16:52:27,775 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:32,776 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:32,777 - INFO - connect
+2026-04-22 16:52:32,778 - INFO - opening connection
+2026-04-22 16:52:32,779 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:37,780 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:37,780 - INFO - connect
+2026-04-22 16:52:37,780 - INFO - opening connection
+2026-04-22 16:52:37,781 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:42,782 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:42,782 - INFO - connect
+2026-04-22 16:52:42,782 - INFO - opening connection
+2026-04-22 16:52:42,783 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:47,784 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:47,785 - INFO - connect
+2026-04-22 16:52:47,785 - INFO - opening connection
+2026-04-22 16:52:47,787 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:52,788 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:52,789 - INFO - connect
+2026-04-22 16:52:52,789 - INFO - opening connection
+2026-04-22 16:52:52,790 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:52:57,791 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:52:57,792 - INFO - connect
+2026-04-22 16:52:57,792 - INFO - opening connection
+2026-04-22 16:52:57,793 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:02,794 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:02,795 - INFO - connect
+2026-04-22 16:53:02,796 - INFO - opening connection
+2026-04-22 16:53:02,797 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:07,798 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:07,799 - INFO - connect
+2026-04-22 16:53:07,799 - INFO - opening connection
+2026-04-22 16:53:07,800 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:12,800 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:12,800 - INFO - connect
+2026-04-22 16:53:12,800 - INFO - opening connection
+2026-04-22 16:53:12,801 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:17,803 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:17,804 - INFO - connect
+2026-04-22 16:53:17,804 - INFO - opening connection
+2026-04-22 16:53:17,806 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:22,807 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:22,808 - INFO - connect
+2026-04-22 16:53:22,808 - INFO - opening connection
+2026-04-22 16:53:22,808 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:27,809 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:27,809 - INFO - connect
+2026-04-22 16:53:27,809 - INFO - opening connection
+2026-04-22 16:53:27,810 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:32,811 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:32,813 - INFO - connect
+2026-04-22 16:53:32,813 - INFO - opening connection
+2026-04-22 16:53:32,814 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:37,815 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:37,816 - INFO - connect
+2026-04-22 16:53:37,816 - INFO - opening connection
+2026-04-22 16:53:37,819 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:42,820 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:42,821 - INFO - connect
+2026-04-22 16:53:42,821 - INFO - opening connection
+2026-04-22 16:53:42,821 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:47,822 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:47,824 - INFO - connect
+2026-04-22 16:53:47,824 - INFO - opening connection
+2026-04-22 16:53:47,826 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:52,827 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:52,828 - INFO - connect
+2026-04-22 16:53:52,828 - INFO - opening connection
+2026-04-22 16:53:52,828 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:53:57,829 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:53:57,830 - INFO - connect
+2026-04-22 16:53:57,830 - INFO - opening connection
+2026-04-22 16:53:57,831 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:02,832 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:02,832 - INFO - connect
+2026-04-22 16:54:02,832 - INFO - opening connection
+2026-04-22 16:54:02,833 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:07,833 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:07,835 - INFO - connect
+2026-04-22 16:54:07,835 - INFO - opening connection
+2026-04-22 16:54:07,837 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:12,838 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:12,839 - INFO - connect
+2026-04-22 16:54:12,839 - INFO - opening connection
+2026-04-22 16:54:12,841 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:17,842 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:17,844 - INFO - connect
+2026-04-22 16:54:17,845 - INFO - opening connection
+2026-04-22 16:54:17,846 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:22,847 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:22,848 - INFO - connect
+2026-04-22 16:54:22,848 - INFO - opening connection
+2026-04-22 16:54:22,849 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:27,850 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:27,850 - INFO - connect
+2026-04-22 16:54:27,850 - INFO - opening connection
+2026-04-22 16:54:27,851 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
+2026-04-22 16:54:32,851 - INFO - Connecting to OPC Server: opc.tcp://127.0.0.1:49320
+2026-04-22 16:54:32,853 - INFO - connect
+2026-04-22 16:54:32,853 - INFO - opening connection
+2026-04-22 16:54:32,855 - ERROR - Connection Error: [Errno 61] Connect call failed ('127.0.0.1', 49320). Retrying in 5s...
