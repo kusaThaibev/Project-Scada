@@ -24,7 +24,21 @@
 .tag-row:last-child { border-bottom: none; }
 .tag-name { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
 .tag-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: monospace; opacity: 0.5; }
-.tag-val { font-size: 1.5rem; font-weight: 800; color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); }
+.tag-val { 
+    font-size: 1.5rem; font-weight: 800; color: var(--accent-color); 
+    text-shadow: 0 0 20px var(--accent-glow);
+    transition: all 0.3s ease;
+}
+
+/* Pulse animation on update */
+.value-updated {
+    animation: pulseUpdate 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pulseUpdate {
+    0% { color: #fff; text-shadow: 0 0 30px #fff; transform: scale(1.1); }
+    100% { color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); transform: scale(1); }
+}
 {% endblock %}
 
 {% block content %}
@@ -99,7 +113,18 @@ function updatePage(data) {
         const valEl = document.getElementById(`tag-val-${tag.tag_id}`);
         const statusEl = document.getElementById(`tag-status-${tag.tag_id}`);
         const wrapEl = document.getElementById(`tag-status-wrap-${tag.tag_id}`);
-        if (valEl) valEl.innerText = tag.value !== null ? tag.value : "---";
+        
+        if (valEl) {
+            const newValue = tag.value !== null ? tag.value : "---";
+            // If value changed, trigger pulse
+            if (valEl.innerText !== String(newValue)) {
+                valEl.innerText = newValue;
+                valEl.classList.remove('value-updated');
+                void valEl.offsetWidth; // Trigger reflow
+                valEl.classList.add('value-updated');
+            }
+        }
+        
         if (statusEl) statusEl.innerText = tag.status.toUpperCase();
         if (wrapEl) wrapEl.style.color = tag.status === 'Good' ? 'var(--success)' : 'var(--danger)';
     });
