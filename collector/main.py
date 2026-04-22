@@ -121,6 +121,7 @@ async def monitor_tags():
                         await asyncio.sleep(5)
                         continue
 
+
                     # --- BULK READ OPTIMIZATION ---
                     # We get all nodes first, then read them in ONE request to Kepware.
                     # This is MUCH faster for 1000+ tags than reading one by one.
