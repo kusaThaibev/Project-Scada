@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SCADA NEXT{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050a18;
+            --navbar-bg: rgba(10, 15, 30, 0.85);
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --accent-color: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --navbar-height: 72px;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            height: var(--navbar-height);
+            background: var(--navbar-bg);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1600px;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 50px; }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; text-decoration: none; color: white; }
+        .logo span { color: var(--accent-color); text-shadow: 0 0 15px var(--accent-glow); }
+        
+        .nav-menu { display: flex; gap: 35px; align-items: center; }
+        .nav-item {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.3s; letter-spacing: 0.8px; cursor: pointer;
+            position: relative;
+            padding: 10px 0;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--accent-color); }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px;
+            background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* DROPDOWN */
+        .dropdown { position: relative; }
+        .dropdown-content {
+            display: none; position: absolute; top: 100%; left: -20px;
+            background: #0f172a; min-width: 260px; border-radius: 20px;
+            border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            padding: 12px; margin-top: 5px; backdrop-filter: blur(20px);
+            animation: dropSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dropdown::after { content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 20px; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        @keyframes dropSlide {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px; color: var(--text-secondary); text-decoration: none;
+            display: flex; align-items: center; gap: 14px; font-size: 0.9rem; border-radius: 14px;
+            transition: 0.3s; margin-bottom: 4px;
+        }
+        .dropdown-item:hover { background: rgba(56, 189, 248, 0.1); color: var(--accent-color); transform: translateX(8px); }
+
+        /* BADGES */
+        .badge { padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); }
+        .status-on { color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+        .status-off { color: var(--danger); border-color: rgba(244, 63, 94, 0.3); }
+        .indicator { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+
+        /* CONTENT AREA */
+        .content { padding: 40px; max-width: 1600px; margin: 0 auto; width: 100%; flex-grow: 1; }
+
+        .btn {
+            background: var(--accent-color); color: #000; border: none; padding: 10px 24px; border-radius: 12px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
+        .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--glass-border); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(15px); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-inner {
+            background: #0f172a; border: 1px solid var(--glass-border); border-radius: 32px;
+            max-width: 520px; width: 90%; padding: 48px; text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="/" class="logo">SCADA<span>NEXT</span></a>
+                <div class="nav-menu">
+                    <a href="/" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">DASHBOARD</a>
+                    <div class="dropdown">
+                        <span class="nav-item {% if 'config' in request.path or 'admin' in request.path %}active{% endif %}">CONFIGURATIONS ▾</span>
+                        <div class="dropdown-content">
+                            <a href="/admin" class="dropdown-item">🗄️ Database Admin</a>
+                            <a href="{% url 'tag_config_list' %}" class="dropdown-item">🏷️ Tag Config Manager</a>
+                            <a href="{% url 'edit_env' %}" class="dropdown-item">🔌 OPC Server Setup</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <div id="opc-badge-base" class="badge status-off">
+                    <span class="indicator"></span> OPC UA: <span id="opc-text-base">OFFLINE</span>
+                </div>
+                <div id="engine-badge-base" class="badge status-off">
+                    <span class="indicator"></span> ENGINE: <span id="engine-text-base">IDLE</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6;">
+        System Update: <span id="footer-sync-time">---</span> | System Core v2.0
+    </footer>
+
+    {% if messages %}
+    <div id="baseMsgModal" class="modal" style="display: flex;">
+        <div class="modal-inner">
+            {% for message in messages %}
+            <h2 style="margin-bottom: 15px; color: var(--accent-color);">{{ message.tags|upper }}</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">{{ message }}</p>
+            {% endfor %}
+            <button class="btn" style="width: 100%; justify-content: center;" onclick="document.getElementById('baseMsgModal').style.display='none'">CLOSE</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/snapshots/');
+                const data = await response.json();
+                
+                const opcBadge = document.getElementById('opc-badge-base');
+                const opcText = document.getElementById('opc-text-base');
+                if (opcBadge) {
+                    opcBadge.className = `badge ${data.opc_connected ? 'status-on' : 'status-off'}`;
+                    opcText.innerText = data.opc_connected ? 'ACTIVE' : 'OFFLINE';
+                }
+
+                const engineBadge = document.getElementById('engine-badge-base');
+                const engineText = document.getElementById('engine-text-base');
+                if (engineBadge) {
+                    engineBadge.className = `badge ${data.collector_running ? 'status-on' : 'status-off'}`;
+                    engineText.innerText = data.collector_running ? 'STABLE' : 'IDLE';
+                }
+                
+                const footerTime = document.getElementById('footer-sync-time');
+                if (footerTime) footerTime.innerText = data.last_sync;
+
+                // Call local page update if exists
+                if (typeof updatePage === 'function') updatePage(data);
+            } catch (err) { console.error(err); }
+        }
+        setInterval(updateStatus, 3000);
+        updateStatus();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

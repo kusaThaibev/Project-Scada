@@ -17,4 +17,7 @@ urlpatterns = [
     path('config/upload/', views.upload_tag_file, name='upload_tag_file'),
     path('config/edit/<str:filename>/', views.edit_tag_file, name='edit_tag_file'),
     path('config/delete/<str:filename>/', views.delete_tag_file, name='delete_tag_file'),
+    
+    # OPC / ENV Config
+    path('config/opc/', views.edit_env, name='edit_env'),
 ]

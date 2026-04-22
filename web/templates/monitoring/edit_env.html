@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}OPC Server Setup | SCADA NEXT{% endblock %}
+
+{% block extra_css %}
+.config-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.config-section {
+    background: var(--card-bg);
+    border-radius: 28px;
+    border: 1px solid var(--glass-border);
+    padding: 40px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+.section-title {
+    font-size: 0.75rem; font-weight: 800; color: var(--accent-color);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;
+    display: flex; align-items: center; gap: 10px;
+}
+.section-title::after { content: ''; flex-grow: 1; height: 1px; background: rgba(56, 189, 248, 0.2); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+
+.form-group { margin-bottom: 25px; }
+.form-label {
+    display: block; font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.form-input {
+    width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+    padding: 14px 20px; border-radius: 14px; color: white; font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem; outline: none; transition: 0.3s;
+}
+.form-input:focus { border-color: var(--accent-color); background: rgba(56, 189, 248, 0.05); }
+
+.info-box {
+    background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 20px; border-radius: 16px; margin-bottom: 40px; display: flex; gap: 15px; align-items: center;
+}
+{% endblock %}
+
+{% block content %}
+<div class="config-container">
+    <div style="margin-bottom: 40px; text-align: center;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 12px; letter-spacing: -1px;">System Configuration</h1>
+        <p style="color: var(--text-secondary);">Manage core engine and database parameters</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- OPC UA CONFIG -->
+        <div class="config-section">
+            <div class="section-title">🔌 OPC UA Connection</div>
+            <div class="form-group">
+                <label class="form-label">OPC Server URL</label>
+                <input type="text" name="OPC_SERVER_URL" class="form-input" value="{{ env.OPC_SERVER_URL|default:'opc.tcp://127.0.0.1:49320' }}">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">OPC Username (Optional)</label>
+                    <input type="text" name="OPC_USER" class="form-input" value="{{ env.OPC_USER }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">OPC Password (Optional)</label>
+                    <input type="password" name="OPC_PASSWORD" class="form-input" value="{{ env.OPC_PASSWORD }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Polling Interval (Seconds)</label>
+                <input type="number" step="0.1" name="POLLING_INTERVAL" class="form-input" value="{{ env.POLLING_INTERVAL|default:'1.0' }}">
+            </div>
+        </div>
+
+        <!-- DATABASE CONFIG -->
+        <div class="config-section">
+            <div class="section-title">🗄️ Database Strategy</div>
+            <div class="form-group">
+                <label class="form-label">Active Database Engine</label>
+                <select name="DB_TYPE" class="form-input" onchange="toggleDbFields(this.value)">
+                    <option value="sqlite" {% if env.DB_TYPE == 'sqlite' %}selected{% endif %}>SQLite (Local File)</option>
+                    <option value="postgres" {% if env.DB_TYPE == 'postgres' %}selected{% endif %}>PostgreSQL (Remote)</option>
+                </select>
+            </div>
+
+            <!-- SQLITE FIELDS -->
+            <div id="sqlite-fields" class="form-group" style="display: {% if env.DB_TYPE != 'postgres' %}block{% else %}none{% endif %};">
+                <label class="form-label">SQLite File Path</label>
+                <input type="text" name="DB_SQLITE_PATH" class="form-input" value="{{ env.DB_SQLITE_PATH }}">
+            </div>
+
+            <!-- POSTGRES FIELDS -->
+            <div id="postgres-fields" style="display: {% if env.DB_TYPE == 'postgres' %}block{% else %}none{% endif %};">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Host</label>
+                        <input type="text" name="DB_HOST" class="form-input" value="{{ env.DB_HOST|default:'localhost' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Port</label>
+                        <input type="number" name="DB_PORT" class="form-input" value="{{ env.DB_PORT|default:'5432' }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Database Name</label>
+                    <input type="text" name="DB_NAME" class="form-input" value="{{ env.DB_NAME|default:'scada_db' }}">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">User</label>
+                        <input type="text" name="DB_USER" class="form-input" value="{{ env.DB_USER|default:'postgres' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="DB_PASSWORD" class="form-input" value="{{ env.DB_PASSWORD }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 100px; display: flex; gap: 20px;">
+            <button type="submit" class="btn" style="flex: 2; justify-content: center; padding: 20px;">💾 Save System Configuration</button>
+            <a href="/" class="btn btn-ghost" style="flex: 1; justify-content: center; padding: 20px;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+function toggleDbFields(val) {
+    document.getElementById('sqlite-fields').style.display = (val === 'sqlite') ? 'block' : 'none';
+    document.getElementById('postgres-fields').style.display = (val === 'postgres') ? 'block' : 'none';
+}
+{% endblock %}

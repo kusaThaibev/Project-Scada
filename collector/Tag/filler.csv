@@ -1,1 +1,2 @@
 machine_name,tag_name,opc_address,deadband,description
+TEST,sss,ns=2;s=Global.Energy.Total,1,test
