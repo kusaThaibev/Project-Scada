@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCADA Monitoring | Tag Configurations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050a18;
+            --navbar-bg: rgba(10, 15, 30, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --accent-color: #38bdf8;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --navbar-height: 64px;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; }
+
+        .navbar { height: var(--navbar-height); background: var(--navbar-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+        .nav-left { display: flex; align-items: center; gap: 40px; }
+        .logo { font-size: 1.25rem; font-weight: 700; }
+        .logo span { color: var(--accent-color); }
+        .nav-menu { display: flex; gap: 25px; }
+        .nav-item { color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { color: var(--accent-color); }
+
+        .content { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+
+        .file-card { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--glass-border); padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px 20px; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
+        td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
+
+        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3); }
+        .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--glass-border); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-inner { background: #0f172a; padding: 40px; border-radius: 28px; border: 1px solid var(--glass-border); max-width: 450px; width: 90%; text-align: center; }
+        
+        .input-minimal {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+            padding: 15px 20px; border-radius: 14px; color: white; font-family: 'Outfit', sans-serif;
+            font-size: 1rem; outline: none; transition: 0.3s; margin-bottom: 25px;
+        }
+        .input-minimal:focus { border-color: var(--accent-color); background: rgba(56, 189, 248, 0.05); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">SCADA<span>NEXT</span></div>
+            <div class="nav-menu">
+                <a href="/" class="nav-item">DASHBOARD</a>
+                <a href="/admin" class="nav-item">DATABASE</a>
+                <a href="{% url 'tag_config_list' %}" class="nav-item active">TAG CONFIG</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <h1 style="font-size: 1.75rem; margin-bottom: 8px;">Tag Configuration Files</h1>
+                <p style="color: var(--text-secondary);">Manage your CSV and Excel tag definitions</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">📤 Upload</button>
+                <button class="btn" onclick="openCreateModal()">✨ New File</button>
+            </div>
+        </div>
+
+        <form id="uploadForm" action="{% url 'upload_tag_file' %}" method="POST" enctype="multipart/form-data" style="display:none;">
+            {% csrf_token %}
+            <input type="file" id="fileInput" name="file" onchange="document.getElementById('uploadForm').submit()">
+        </form>
+
+        <div class="file-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Size</th>
+                        <th>Last Modified</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td style="font-weight: 600;">📄 {{ file.name }}</td>
+                        <td style="color: var(--text-secondary);">{{ file.size }}</td>
+                        <td style="color: var(--text-secondary);">{{ file.modified|date:"d M Y, H:i" }}</td>
+                        <td style="text-align: right;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                {% if file.name|slice:"-3:" == "csv" %}
+                                <a href="{% url 'edit_tag_file' file.name %}" class="btn btn-ghost">✏️ Edit</a>
+                                {% endif %}
+                                <a href="{% url 'delete_tag_file' file.name %}" class="btn btn-danger" onclick="return confirm('Delete this file?')">🗑️</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-secondary);">No configuration files found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- CREATE FILE MODAL -->
+    <div id="createModal" class="modal">
+        <div class="modal-inner">
+            <h2 style="margin-bottom: 10px;">New Configuration</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">Enter a name for your new CSV file.</p>
+            <form action="{% url 'create_tag_file' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="filename" class="input-minimal" placeholder="e.g. production_line_2" required autofocus>
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" class="btn btn-ghost" style="flex: 1; justify-content: center;" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="btn" style="flex: 1; justify-content: center;">Create File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL -->
+    {% if messages %}
+    <div id="msgModal" class="modal" style="display: flex;">
+        <div class="modal-inner">
+            {% for message in messages %}
+            <h2 style="margin-bottom: 15px; color: {% if message.tags == 'success' %}var(--success){% else %}var(--accent-color){% endif %};">{{ message.tags|upper }}</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">{{ message }}</p>
+            {% endfor %}
+            <button class="btn" style="width: 100%; justify-content: center;" onclick="document.getElementById('msgModal').style.display='none'">CLOSE</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        function openCreateModal() { document.getElementById('createModal').style.display = 'flex'; }
+        function closeCreateModal() { document.getElementById('createModal').style.display = 'none'; }
+    </script>
+
+</body>
+</html>

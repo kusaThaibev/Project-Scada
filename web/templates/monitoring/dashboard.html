@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCADA Monitoring | ULTRA-SLIM Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050a18;
+            --navbar-bg: rgba(10, 15, 30, 0.85);
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --accent-color: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --navbar-height: 72px;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR REFINED --- */
+        .navbar {
+            height: var(--navbar-height);
+            background: var(--navbar-bg);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center the container */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1600px;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 50px; }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: var(--accent-color); text-shadow: 0 0 15px var(--accent-glow); }
+        
+        .nav-menu { display: flex; gap: 35px; align-items: center; }
+        .nav-item {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.3s; letter-spacing: 0.8px; cursor: pointer;
+            position: relative;
+            padding: 10px 0;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--accent-color); }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px;
+            background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* DROPDOWN REFINED */
+        .dropdown { position: relative; }
+        .dropdown-content {
+            display: none; position: absolute; top: 100%; left: -20px;
+            background: #0f172a; min-width: 240px; border-radius: 20px;
+            border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            padding: 12px; margin-top: 5px; backdrop-filter: blur(20px);
+            animation: dropSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dropdown::after { content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 20px; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        @keyframes dropSlide {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px; color: var(--text-secondary); text-decoration: none;
+            display: flex; align-items: center; gap: 14px; font-size: 0.9rem; border-radius: 14px;
+            transition: 0.3s; margin-bottom: 4px;
+        }
+        .dropdown-item:hover { background: rgba(56, 189, 248, 0.1); color: var(--accent-color); transform: translateX(8px); }
+
+        /* --- CONTENT --- */
+        .content { padding: 40px; max-width: 1600px; margin: 0 auto; width: 100%; flex-grow: 1; }
+
+        /* --- COMMAND CENTER --- */
+        .command-center {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;
+            padding: 16px 32px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* --- GRID --- */
+        .machine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 30px; }
+        .card {
+            background: var(--card-bg); border-radius: 24px; border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
+        }
+        .card:hover { transform: translateY(-10px); border-color: rgba(56, 189, 248, 0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+        .card-header { padding: 24px 32px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+        .card-body { padding: 12px 32px 32px; min-height: 100px; }
+
+        /* --- TAGS --- */
+        .tag-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .tag-row:last-child { border-bottom: none; }
+        .tag-name { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
+        .tag-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: monospace; opacity: 0.7; }
+        .tag-val { font-size: 1.5rem; font-weight: 800; color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); }
+
+        /* --- BUTTONS --- */
+        .btn {
+            background: var(--accent-color); color: #000; border: none; padding: 10px 24px; border-radius: 12px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
+        .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--glass-border); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* --- BADGES --- */
+        .badge { padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); }
+        .status-on { color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+        .status-off { color: var(--danger); border-color: rgba(244, 63, 94, 0.3); }
+        .indicator { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+
+        /* --- MINIMAL MODAL --- */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(15px); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-inner {
+            background: #0f172a; border: 1px solid var(--glass-border); border-radius: 32px;
+            max-width: 520px; width: 90%; padding: 48px; text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
+        .modal-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 16px; }
+        .modal-desc { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; margin-bottom: 32px; }
+        .log-container {
+            background: rgba(0,0,0,0.5); border-radius: 20px; padding: 24px; text-align: left;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            max-height: 400px; overflow-y: auto; margin-bottom: 32px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.03);
+        }
+        .modal-actions { display: flex; gap: 16px; }
+        .modal-actions .btn { flex: 1; justify-content: center; padding: 16px; }
+
+        footer { text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">SCADA<span>NEXT</span></div>
+                <div class="nav-menu">
+                    <a href="/" class="nav-item active">DASHBOARD</a>
+                    <div class="dropdown">
+                        <span class="nav-item">CONFIGURATIONS ▾</span>
+                        <div class="dropdown-content">
+                            <a href="/admin" class="dropdown-item">🗄️ Database Admin</a>
+                            <a href="{% url 'tag_config_list' %}" class="dropdown-item">🏷️ Tag Config Manager</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <div id="opc-badge" class="badge {% if opc_connected %}status-on{% else %}status-off{% endif %}">
+                    <span class="indicator"></span> OPC UA: <span id="opc-text">{% if opc_connected %}ACTIVE{% else %}OFFLINE{% endif %}</span>
+                </div>
+                <div id="engine-badge" class="badge {% if collector_running %}status-on{% else %}status-off{% endif %}">
+                    <span class="indicator"></span> ENGINE: <span id="engine-text">{% if collector_running %}STABLE{% else %}IDLE{% endif %}</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="command-center">
+            <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Command Center</div>
+            <div style="display: flex; gap: 12px;">
+                {% if not collector_running %}
+                <button class="btn" onclick="askConfirm('Establish secure OPC connection?', '{% url 'start_collector' %}')">CONNECT</button>
+                {% else %}
+                <button class="btn btn-danger" onclick="askConfirm('Terminate live data feed?', '{% url 'stop_collector' %}')">DISCONNECT</button>
+                {% endif %}
+                <button class="btn btn-ghost" onclick="askConfirm('Sync configuration from files?', '{% url 'sync_tags' %}')">SYNC</button>
+                <a href="{% url 'view_log' %}" class="btn btn-ghost">LOGS</a>
+            </div>
+        </div>
+
+        <div class="machine-grid">
+            {% for item in dashboard_data %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-color);">{{ item.machine.machine_name }}</h3>
+                    <span style="font-size: 0.7rem; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 12px;">{{ item.active_tags }}/{{ item.total_tags }} SENSORS</span>
+                </div>
+                <div class="card-body">
+                    {% for snap in item.tags %}
+                    <div class="tag-row">
+                        <div>
+                            <div class="tag-name">{{ snap.tag.tag_name }}</div>
+                            <div class="tag-meta">{{ snap.tag.opc_address }}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div id="tag-val-{{ snap.tag.id }}" class="tag-val">{{ snap.last_value|default:"---" }}</div>
+                            <div id="tag-status-wrap-{{ snap.tag.id }}" style="font-size: 0.65rem; font-weight: 800; color: {% if snap.last_status == 'Good' %}var(--success){% else %}var(--danger){% endif %};">
+                                ● <span id="tag-status-{{ snap.tag.id }}">{{ snap.last_status|upper }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div style="padding: 40px 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; font-style: italic;">
+                        No active sensors detected
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        Last Update: <span id="last-sync-time">{{ last_sync|date:"H:i:s" }}</span> | System Core v2.0
+    </footer>
+
+    <!-- MODALS -->
+    <div id="modal" class="modal">
+        <div class="modal-inner">
+            <h2 id="mHeader" class="modal-title">Notification</h2>
+            <div id="mBody" class="modal-desc">Message...</div>
+            <div class="modal-actions">
+                <button class="btn" style="width: 100%" onclick="closeM()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cModal" class="modal">
+        <div class="modal-inner">
+            <h2 class="modal-title">Are you sure?</h2>
+            <div id="cBody" class="modal-desc">Please confirm.</div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeC()">CANCEL</button>
+                <a id="cBtn" href="#" class="btn">CONFIRM</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openM(type, title, message) {
+            const m = document.getElementById('modal');
+            const head = document.getElementById('mHeader');
+            const body = document.getElementById('mBody');
+            head.innerText = title;
+            head.style.color = type === 'error' ? 'var(--danger)' : (type === 'success' ? 'var(--success)' : 'var(--accent-color)');
+            if (message.includes('--- Collector Log')) {
+                body.innerHTML = `<div class="log-container">${message.replace(/\n/g, '<br>')}</div>`;
+                document.querySelector('#modal .modal-inner').style.maxWidth = '800px';
+            } else {
+                body.innerText = message;
+                document.querySelector('#modal .modal-inner').style.maxWidth = '520px';
+            }
+            m.style.display = 'flex';
+        }
+        function closeM() { document.getElementById('modal').style.display = 'none'; }
+        
+        function askConfirm(msg, url) {
+            const m = document.getElementById('cModal');
+            document.getElementById('cBody').innerText = msg;
+            document.getElementById('cBtn').href = url;
+            m.style.display = 'flex';
+        }
+        function closeC() { document.getElementById('cModal').style.display = 'none'; }
+
+        async function updateDashboard() {
+            if (document.getElementById('modal').style.display === 'flex' || 
+                document.getElementById('cModal').style.display === 'flex') {
+                return;
+            }
+            try {
+                const response = await fetch('/api/snapshots/');
+                const data = await response.json();
+                data.tags.forEach(tag => {
+                    const valEl = document.getElementById(`tag-val-${tag.tag_id}`);
+                    const statusEl = document.getElementById(`tag-status-${tag.tag_id}`);
+                    const wrapEl = document.getElementById(`tag-status-wrap-${tag.tag_id}`);
+                    if (valEl) valEl.innerText = tag.value !== null ? tag.value : "---";
+                    if (statusEl) statusEl.innerText = tag.status.toUpperCase();
+                    if (wrapEl) wrapEl.style.color = tag.status === 'Good' ? 'var(--success)' : 'var(--danger)';
+                });
+                const opcBadge = document.getElementById('opc-badge');
+                const opcText = document.getElementById('opc-text');
+                if (opcBadge) {
+                    opcBadge.className = `badge ${data.opc_connected ? 'status-on' : 'status-off'}`;
+                    opcText.innerText = data.opc_connected ? 'ACTIVE' : 'OFFLINE';
+                }
+                const engineBadge = document.getElementById('engine-badge');
+                const engineText = document.getElementById('engine-text');
+                if (engineBadge) {
+                    engineBadge.className = `badge ${data.collector_running ? 'status-on' : 'status-off'}`;
+                    engineText.innerText = data.collector_running ? 'STABLE' : 'IDLE';
+                }
+                document.getElementById('last-sync-time').innerText = data.last_sync;
+            } catch (err) { console.error(err); }
+        }
+        setInterval(updateDashboard, 3000);
+
+        {% if messages %}
+            {% for message in messages %}
+                openM('{{ message.tags }}', '{{ message.tags|upper }}', '{{ message|escapejs }}');
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>
