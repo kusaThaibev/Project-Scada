@@ -24,6 +24,7 @@ def get_collector_process():
             if cmdline and COLLECTOR_SCRIPT_NAME in str(cmdline):
                 return proc
         except (psutil.NoSuchProcess, psutil.AccessDenied):
+            print("Error getting collector process.")
             continue
     return None
 
